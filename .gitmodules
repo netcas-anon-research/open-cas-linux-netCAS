@@ -1,0 +1,3 @@
+[submodule "ocf"]
+	path = ocf
+	url = https://github.com/netCAS-SKKU/ocf-netCAS.git
