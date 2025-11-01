@@ -25,7 +25,7 @@ error() {
 
 
 # Check if we're inside a git repository
-if [[ -d "$SOURCES_DIR/.git" ]] && which git &>/dev/null &&\
+if [[ (-d "$SOURCES_DIR/.git" || -f "$SOURCES_DIR/.git") ]] && which git &>/dev/null &&\
         (cd "$SOURCES_DIR" && git rev-parse --is-inside-work-tree &>/dev/null); then
     if [[ ! -r "$MANUAL_VERSION_INPUT" ]]; then
         error "can't read version input file '$MANUAL_VERSION_INPUT'"
@@ -47,14 +47,8 @@ if [[ -d "$SOURCES_DIR/.git" ]] && which git &>/dev/null &&\
         LAST_SUB_COMMIT_HASHES+=($(cd "$SOURCES_DIR/$SUBMOD" && git log -1 --pretty=format:%H))
         LAST_SUB_COMMIT_HASHES_ABBR+=($(cd "$SOURCES_DIR/$SUBMOD" && git log -1 --pretty=format:%h))
     done
-    if [[ $(cd "$SOURCES_DIR" && git tag --points-at HEAD) ]]; then
-        CAS_VERSION_RELEASE="release"
-    elif [[ $(cd "$SOURCES_DIR" && git log -1 --pretty=format:%H)\
-            == $(cd "$SOURCES_DIR" && git log -1 --merges --pretty=format:%H) ]]; then
-        CAS_VERSION_RELEASE="master"
-    else
-        CAS_VERSION_RELEASE="devel"
-    fi
+    # Always use netCAS suffix for this fork
+    CAS_VERSION_RELEASE="netCAS"
 
     CAS_VERSION=$(printf "%02d.%02d.%01d.%04d.%s" $CAS_VERSION_MAIN $CAS_VERSION_MAJOR\
                 $CAS_VERSION_MINOR $CAS_VERSION_BUILD $CAS_VERSION_RELEASE)
